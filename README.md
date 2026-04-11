@@ -1,4 +1,4 @@
-# 纷享开发助手 - 小黑
+# 纷享开发助手 Skill - 小黑
 
 [![License](https://img.shields.io/badge/license-GPL%20v3-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.8%2B-brightgreen.svg)](https://www.python.org/)
