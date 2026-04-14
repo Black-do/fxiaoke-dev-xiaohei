@@ -1,9 +1,17 @@
 ---
 name: "fxiaoke-dev-xiaohei"
-description: "Intelligent API document retrieval for Fenxiang APL development. Invoke when user develops Fenxiang functions or queries API usage."
+description: "Intelligent API document retrieval for Fenxiang APL development. Invoke when user develops Fenxiang functions or queries API usage. 触发词：纷享开发、API 查询、纷享 API."
 ---
 
 # 纷享开发助手
+
+## When to Use
+
+Invoke this skill when:
+- User develops Fenxiang APL functions (Groovy language)
+- User queries Fenxiang API usage
+- User encounters API-related issues during development
+- Detect project is Fenxiang-related
 
 ## 何时使用
 
@@ -12,6 +20,12 @@ description: "Intelligent API document retrieval for Fenxiang APL development. I
 - 用户查询纷享 API 用法
 - 用户在开发过程中遇到 API 相关问题
 - 检测到项目与纷享相关
+
+## Core Functionality
+
+- **API Document Retrieval**: Use `api_doc_helper.py` for intelligent search
+- **Code Development**: Generate code based on API documentation
+- **Problem Solving**: Help resolve API usage issues
 
 ## 核心功能
 
@@ -153,3 +167,30 @@ if (result.dataList && result.dataList.size() > 0) {
 - **语法合规**：所有代码必须遵守纷享 APL 语法限制
 - **批量操作**：优先使用 `batchCreate`、`batchUpdate`、`batchDelete` 提升性能
 - **分页查询**：使用 `Range.each`，最多 500 次循环
+
+## Example
+
+**User**: 如何查询纷享的对象数据？
+
+**Skill Response**:
+1. 检索 ObjectDataAPI 文档
+2. 提供 Fx.object.find 示例代码
+3. 说明语法限制和最佳实践
+
+```groovy
+// 示例：查询对象数据
+def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
+    'Account__c',
+    FQLAttribute.builder()
+        .columns(['_id', 'name', 'owner'])
+        .queryTemplate(QueryTemplate.AND([:]))
+        .limit(10)
+        .build()
+)
+
+if (!error) {
+    result.dataList.each { record ->
+        log.info("记录：" + record.name)
+    }
+}
+```
