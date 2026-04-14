@@ -124,9 +124,10 @@ Api_Documentation_Markdown/
 
 | 类型 | 规则 | 示例 |
 |------|------|------|
-| 对象 API Name | 以 `__c` 结尾 | `Account__c` |
-| 自定义字段 | 以 `__c` 结尾 | `field_4zWog__c` |
-| 内置字段 | 无 `__c` 后缀 | `_id`, `name`, `owner` |
+| **内置对象** | 无 `__c` 后缀 | `AccountObj`, `ContactObj`, `ProductObj` |
+| **自定义对象** | 以 `__c` 结尾 | `MyCustomObj__c` |
+| **自定义字段** | 以 `__c` 结尾 | `field_4zWog__c` |
+| **内置字段** | 无 `__c` 后缀 | `_id`, `name`, `owner`, `created_by` |
 
 ## 常用内置字段
 
@@ -143,7 +144,7 @@ Api_Documentation_Markdown/
 ```groovy
 // 查询单条记录（推荐使用 findOne）
 def (Boolean error, Map data, String errorMessage) = Fx.object.findOne(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name'])
         .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
