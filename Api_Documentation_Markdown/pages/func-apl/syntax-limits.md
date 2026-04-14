@@ -200,9 +200,9 @@ Fx.object.select(sql, SelectAttribute.builder().build(), { list ->
 // 使用 Range.each 进行循环分页（最多 500 次）
 def limit = 100
 def objectName = 'AccountObj'
-def maxPages = 500 // 最大分页次数
 
-Range range = Ranges.of(0, maxPages)
+// Range 大小不能超过 500，所以使用 0-499（共 500 次）
+Range range = Ranges.of(0, 499)
 range.each { page ->
     def offset = page * limit
     def sqlPage = "select _id, name from ${objectName} where _id != '' limit ${limit} offset ${offset}"
