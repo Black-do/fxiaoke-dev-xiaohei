@@ -184,7 +184,18 @@ Fx.object.find('AccountObj',
         .build()
 )
 
-// 分页查询（使用 Range.each）
+// 分页查询（使用 SQL + 闭包处理大批量数据）
+// 适用于查询大量数据的场景，自动分页处理
+def objectName = 'AccountObj'
+def sql = "select _id, name from ${objectName} where _id != ''"
+Fx.object.select(sql, SelectAttribute.builder().build(), { list ->
+    list.each { item ->
+        Map map = item as Map
+        log.info("记录 ID: " + map['_id'] + ", 名称：" + map['name'])
+    }
+}).result()
+
+// 或使用 FQL + Range.each 实现分页（适合数据量不大的场景）
 Range range = Ranges.of(0, 500)
 range.each { offset ->
     def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
@@ -197,6 +208,15 @@ range.each { offset ->
             .build()
     )
     // 处理分页数据
+    if (!error && result.dataList) {
+        result.dataList.each { record ->
+            log.info("记录：" + record.getAt('name'))
+        }
+        // 如果返回数据少于 limit，说明已经是最后一页
+        if (result.dataList.size() < 100) {
+            return
+        }
+    }
 }
 ```
 
