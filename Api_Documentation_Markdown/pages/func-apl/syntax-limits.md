@@ -195,27 +195,20 @@ Fx.object.select(sql, SelectAttribute.builder().build(), { list ->
     }
 }).result()
 
-// 或使用 FQL + Range.each 实现分页（适合数据量不大的场景）
-Range range = Ranges.of(0, 500)
-range.each { offset ->
-    def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
-        'AccountObj',
-        FQLAttribute.builder()
-            .columns(['_id', 'name'])
-            .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
-            .limit(100)  // 每次查询 100 条
-            .offset(offset)
-            .build()
-    )
-    // 处理分页数据
-    if (!error && result.dataList) {
-        result.dataList.each { record ->
-            log.info("记录：" + record.getAt('name'))
-        }
-        // 如果返回数据少于 limit，说明已经是最后一页
-        if (result.dataList.size() < 100) {
-            return
-        }
+// 或使用 SQL 分页查询（适合需要分页的场景）
+// FQL 不支持 offset，必须使用 SQL 语法：limit row_count offset offset
+def offset = 0
+def limit = 100
+def sqlPage = "select _id, name from ${objectName} where _id != '' limit ${limit} offset ${offset}"
+def rst = Fx.object.select(
+    sqlPage,
+    SelectAttribute.builder().build()
+).result() as QueryResult
+
+// 处理分页数据
+if (rst) {
+    rst.dataList.each { record ->
+        log.info("记录：" + record.getAt('name'))
     }
 }
 ```
