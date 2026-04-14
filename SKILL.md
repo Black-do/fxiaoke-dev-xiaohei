@@ -40,6 +40,25 @@ Invoke this skill when:
 3. **分析内容**：提取关键信息
 4. **生成响应**：提供 API 用法和代码示例
 
+## ⚠️ 编写代码前必须遵守
+
+**在编写任何纷享 APL 代码前，必须按以下优先级参考文档：**
+
+### 1️⃣ 优先参考：本地 API 文档
+- **必须首先检索** `Api_Documentation_Markdown/pages/func-apl/` 目录
+- **重点参考**：
+  - [`api-reference.md`](Api_Documentation_Markdown/pages/func-apl/api-reference.md) - API 用法和示例
+  - [`syntax-limits.md`](Api_Documentation_Markdown/pages/func-apl/syntax-limits.md) - 语法限制和规范
+- **确保代码风格**与官方文档一致
+
+### 2️⃣ 其次参考：联网检索
+- 当本地文档不完整或缺失时
+- 优先采用纷享官方文档
+
+### 3️⃣ 最后参考：标准 Groovy
+- 必须遵守纷享 APL 的语法限制
+- 禁止使用 APL 不支持的特性
+
 ## 代码编写优先级
 
 1. **本地 APL 文档** - 优先使用 skill 内的 `Api_Documentation_Markdown` 文档
