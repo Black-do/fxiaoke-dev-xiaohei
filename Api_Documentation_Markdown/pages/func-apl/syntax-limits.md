@@ -15,17 +15,17 @@
 ```groovy
 // 遍历查询结果
 def (Boolean error, QueryResult queryResult, String errorMessage) = Fx.object.find(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name'])
-        .queryTemplate(QueryTemplate.AND([:]))
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
         .limit(10)
         .build()
 )
 
 if (!error && queryResult.dataList) {
     queryResult.dataList.each { record ->
-        log.info("记录名称: " + record.name)
+        log.info("记录名称：" + record.getAt('name'))
     }
 }
 ```
@@ -102,9 +102,50 @@ try {
 // ✅ 正确
 def (Boolean error, QueryResult queryResult, String errorMessage) = Fx.object.find(...)
 if (error) {
-    log.error("查询失败: " + errorMessage)
+    log.error("查询失败：" + errorMessage)
     return
 }
+```
+
+## ⚠️ queryTemplate 强制规范
+
+**使用 `Fx.object.find/findOne` 时必须遵守：**
+
+| 查询条件 | 状态 | 说明 |
+|---------|------|------|
+| `QueryTemplate.AND([:])` | ❌ **禁止** | 会报错 "parameter cannot be empty" |
+| `QueryTemplate.AND(['_id': QueryOperator.NE('')])` | ✅ **推荐** | 查询所有记录 |
+| `QueryTemplate.AND(['field': QueryOperator.EQ('value')])` | ✅ **推荐** | 条件查询 |
+
+```groovy
+// ❌ 错误：空查询条件（会报错）
+def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
+    'AccountObj',
+    FQLAttribute.builder()
+        .columns(['_id', 'name'])
+        .queryTemplate(QueryTemplate.AND([:]))
+        .build()
+)
+
+// ✅ 正确：查询所有记录
+def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
+    'AccountObj',
+    FQLAttribute.builder()
+        .columns(['_id', 'name'])
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+        .limit(10)
+        .build()
+)
+```
+
+**常用查询操作符：**
+```groovy
+QueryOperator.EQ('value')        // 等于
+QueryOperator.NE('')             // 不等于（查询所有推荐）
+QueryOperator.GT(100)            // 大于
+QueryOperator.LT(100)            // 小于
+QueryOperator.LIKE('%keyword%')  // 模糊匹配
+QueryOperator.IN(['a', 'b'])     // 在数组中
 ```
 
 ## 函数调用限制

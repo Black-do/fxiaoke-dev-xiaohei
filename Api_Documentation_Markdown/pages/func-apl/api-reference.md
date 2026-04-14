@@ -40,7 +40,7 @@
 
 ```groovy
 // 基本查询
-Fx.object.find('Account__c',
+Fx.object.find('AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner'])
         .queryTemplate(QueryTemplate.AND([
@@ -53,13 +53,28 @@ Fx.object.find('Account__c',
 )
 
 // 单条查询（推荐）
-Fx.object.findOne('Account__c',
+Fx.object.findOne('AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name'])
         .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.EQ('xxx')]))
         .build()
 )
+
+// 查询所有记录
+Fx.object.find('AccountObj',
+    FQLAttribute.builder()
+        .columns(['_id', 'name'])
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+        .limit(10)
+        .build()
+)
 ```
+
+## ⚠️ 重要提示
+
+**queryTemplate 使用规范已在 [syntax-limits.md](syntax-limits.md) 详细说明，请务必遵守：**
+- ❌ 禁止使用空的 `QueryTemplate.AND([:])`
+- ✅ 使用有效的查询条件，如 `QueryTemplate.AND(['_id': QueryOperator.NE('')])`
 
 ## 常用查询操作符
 
