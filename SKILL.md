@@ -188,9 +188,15 @@ def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
         .build()
 )
 
-if (!error) {
+if (error) {
+    log.error("查询失败：" + errorMessage)
+    return
+}
+
+if (result.dataList && result.dataList.size() > 0) {
     result.dataList.each { record ->
-        log.info("记录：" + record.name)
+        // 使用 getAt 方法访问字段，避免静态类型检查错误
+        log.info("记录：" + record.getAt('name'))
     }
 }
 ```
