@@ -336,7 +336,7 @@ def generate_example_code(api_name: str, method_name: str) -> str:
         'ObjectDataAPI': {
             'find': '''// 使用 Fx.object.find 查询多条数据
 def (Boolean error, QueryResult queryResult, String errorMessage) = Fx.object.find(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner', 'field_4zWog__c'])
         .queryTemplate(QueryTemplate.AND(['name': QueryOperator.LIKE('%公司%')]))
@@ -348,7 +348,7 @@ if (!error) {
 }''',
             'findOne': '''// 使用 Fx.object.findOne 查询单条数据（推荐）
 def (Boolean error, Map data, String errorMessage) = Fx.object.findOne(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner'])
         .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.EQ('64b1113e87ec1c0001bfc102')]))
@@ -364,31 +364,31 @@ Map masterData = [
     field_4zWog__c: '自定义字段值'
 ]
 def (Boolean error, Map data, String errorMessage) = Fx.object.create(
-    'Account__c',
+    'AccountObj',
     masterData,
-    [:], // 从对象数据，无则为空Map
+    [:], // 从对象数据，无则为空 Map
     CreateAttribute.builder().build()
 )
 if (!error) {
     log.info("创建成功，ID: " + data['_id'])
 }''',
-            'batchCreate': '''// 批量创建对象（最多500条/批）
+            'batchCreate': '''// 批量创建对象（最多 500 条/批）
 List dataList = [
-    [name: '测试订单1', field_p1M7F__c: Date.now().toTimestamp(), owner: ['1000']],
-    [name: '测试订单2', field_p1M7F__c: Date.now().toTimestamp(), owner: ['1001']]
+    [name: '测试订单 1', field_p1M7F__c: Date.now().toTimestamp(), owner: ['1000']],
+    [name: '测试订单 2', field_p1M7F__c: Date.now().toTimestamp(), owner: ['1001']]
 ]
 def (Boolean error, List<Map> batchData, String errorMessage) = Fx.object.batchCreate(
-    'Account__c',
+    'AccountObj',
     dataList,
     CreateAttribute.builder().build()
 )
 if (!error) {
     batchData.each { item ->
-        log.info("创建成功: " + item['name'] + ", ID: " + item['_id'])
+        log.info("创建成功：" + item['name'] + ", ID: " + item['_id'])
     }
 }''',
             'update': '''// 增量更新单个对象（使用 Fx.object.update）
-String objectAPIName = 'Account__c'
+String objectAPIName = 'AccountObj'
 String dataId = '64b1113e87ec1c0001bfc102'
 Map updateData = [
     name: '更新后的公司名称',
@@ -404,22 +404,22 @@ if (!error) {
     log.info("更新成功")
 }''',
             'delete': '''// 删除回收站数据（使用 Fx.object.delete）
-// 注意：delete只能删除已作废的数据（回收站中的数据）
+// 注意：delete 只能删除已作废的数据（回收站中的数据）
 def rst = Fx.object.delete(
-    'Account__c',
+    'AccountObj',
     '64b1113e87ec1c0001bfc102'
 )
 log.info(rst)''',
             'remove': '''// 作废数据（使用 Fx.object.remove）
 // 将数据放入回收站
 def rst = Fx.object.remove(
-    'Account__c',
+    'AccountObj',
     '64b1113e87ec1c0001bfc102'
 ).result() as Map
 log.info(rst)''',
             'changeOwner': '''// 变更负责人（使用 Fx.object.changeOwner）
 Fx.object.changeOwner(
-    'Account__c',
+    'AccountObj',
     '64b1113e87ec1c0001bfc102',
     'new_user_id'
 ).result()'''

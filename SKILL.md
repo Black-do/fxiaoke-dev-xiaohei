@@ -199,7 +199,7 @@ if (data) {
 ```groovy
 // 示例：查询对象数据（使用 find 查询多条记录）
 def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner'])
         .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))

@@ -127,17 +127,17 @@ dataList.each { item -> }
 ```groovy
 // 查询对象数据
 def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
-    'Account__c',
+    'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner'])
-        .queryTemplate(QueryTemplate.AND([:]))
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
         .limit(10)
         .build()
 )
 
 if (!error) {
     result.dataList.each { record ->
-        log.info("记录: " + record.name)
+        log.info("记录：" + record.getAt('name'))
     }
 }
 ```
