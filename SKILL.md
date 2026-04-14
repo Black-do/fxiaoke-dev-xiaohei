@@ -141,23 +141,22 @@ Api_Documentation_Markdown/
 ## 错误处理模式
 
 ```groovy
-def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
+// 查询单条记录（推荐使用 findOne）
+def (Boolean error, Map data, String errorMessage) = Fx.object.findOne(
     'Account__c',
     FQLAttribute.builder()
         .columns(['_id', 'name'])
-        .queryTemplate(QueryTemplate.AND([:]))
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
         .build()
 )
 
 if (error) {
-    log.error("查询失败: " + errorMessage)
+    log.error("查询失败：" + errorMessage)
     return
 }
 
-if (result.dataList && result.dataList.size() > 0) {
-    result.dataList.each { record ->
-        log.info("记录: " + record.name)
-    }
+if (data) {
+    log.info("记录：" + data.getAt('name'))
 }
 ```
 
@@ -178,12 +177,12 @@ if (result.dataList && result.dataList.size() > 0) {
 3. 说明语法限制和最佳实践
 
 ```groovy
-// 示例：查询对象数据
+// 示例：查询对象数据（使用 find 查询多条记录）
 def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
     'Account__c',
     FQLAttribute.builder()
         .columns(['_id', 'name', 'owner'])
-        .queryTemplate(QueryTemplate.AND([:]))
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
         .limit(10)
         .build()
 )
