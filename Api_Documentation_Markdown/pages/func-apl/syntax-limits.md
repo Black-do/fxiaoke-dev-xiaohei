@@ -127,13 +127,13 @@ def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
         .build()
 )
 
-// ✅ 正确：查询所有记录
+// ✅ 正确：查询所有记录（默认 limit=10，最高 100）
 def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
     'AccountObj',
     FQLAttribute.builder()
         .columns(['_id', 'name'])
         .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
-        .limit(10)
+        .limit(10)  // 默认 10 条，最高 100 条
         .build()
 )
 ```
@@ -146,6 +146,58 @@ QueryOperator.GT(100)            // 大于
 QueryOperator.LT(100)            // 小于
 QueryOperator.LIKE('%keyword%')  // 模糊匹配
 QueryOperator.IN(['a', 'b'])     // 在数组中
+```
+
+## ⚠️ limit 限制规范
+
+**FQL/SQL 查询的 limit 默认值和上限：**
+
+| 场景 | 默认值 | 最高限制 | 说明 |
+|------|--------|---------|------|
+| `Fx.object.find` | 10 条 | 100 条 | 未设置 limit 时默认查询 10 条 |
+| `Fx.object.findOne` | 1 条 | 1 条 | 只返回第一条匹配记录 |
+| 分页查询 | - | 100 条 | 单次查询最高 100 条 |
+
+```groovy
+// 默认查询 10 条（未设置 limit）
+Fx.object.find('AccountObj',
+    FQLAttribute.builder()
+        .columns(['_id', 'name'])
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+        .build()  // 默认 limit=10
+)
+
+// 手动设置 limit（最高 100 条）
+Fx.object.find('AccountObj',
+    FQLAttribute.builder()
+        .columns(['_id', 'name'])
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+        .limit(50)  // ✅ 有效范围：1-100
+        .build()
+)
+
+// ❌ 错误：超过最高限制
+Fx.object.find('AccountObj',
+    FQLAttribute.builder()
+        .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+        .limit(200)  // 超过 100 条限制！
+        .build()
+)
+
+// 分页查询（使用 Range.each）
+Range range = Ranges.of(0, 500)
+range.each { offset ->
+    def (Boolean error, QueryResult result, String errorMessage) = Fx.object.find(
+        'AccountObj',
+        FQLAttribute.builder()
+            .columns(['_id', 'name'])
+            .queryTemplate(QueryTemplate.AND(['_id': QueryOperator.NE('')]))
+            .limit(100)  // 每次查询 100 条
+            .offset(offset)
+            .build()
+    )
+    // 处理分页数据
+}
 ```
 
 ## 函数调用限制
